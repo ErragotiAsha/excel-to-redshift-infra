@@ -7,7 +7,7 @@ on:
 
 jobs:
   terraform:
-    name: Terraform Plan and Apply
+    name: Terraform Plan
     runs-on: ubuntu-latest
 
     steps:
@@ -35,6 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: terraform
     if: github.ref == 'refs/heads/main'
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -54,5 +55,5 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve tfplan
-.ref == 'refs/heads/main'
-        run: terraform apply -auto-approve -input=false
+
+
