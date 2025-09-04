@@ -36,7 +36,7 @@ jobs:
         run: terraform -chdir=excel-to-redshift plan -out=tfplan
 
       - name: Upload Terraform Plan
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: tfplan
           path: excel-to-redshift/tfplan
@@ -44,5 +44,3 @@ jobs:
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main'
         run: terraform -chdir=excel-to-redshift apply -auto-approve tfplan
-
-
