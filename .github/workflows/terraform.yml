@@ -3,7 +3,7 @@ name: Terraform CI/CD
 on:
   push:
     branches:
-      - main   # Run pipeline when changes are pushed to main branch
+      - main
   pull_request:
 
 jobs:
@@ -12,27 +12,44 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      # Step 1: Checkout the repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.9.5   # Or your installed version
-
-      - name: Configure AWS Credentials
+      # Step 2: Configure AWS credentials from GitHub secrets
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+      # Step 3: Setup Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.0   # use the version you need
+
+      # Step 4: Terraform Init
       - name: Terraform Init
-        run: terraform init -input=false
+        run: terraform init
 
+      # Step 5: Terraform Format
+      - name: Terraform Format
+        run: terraform fmt -check
+
+      # Step 6: Terraform Validate
+      - name: Terraform Validate
+        run: terraform validate
+
+      # Step 7: Terraform Plan
       - name: Terraform Plan
-        run: terraform plan -input=false
+        run: terraform plan
 
+      # (Optional) Step 8: Terraform Apply on push to main
       - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve
+ly
         if: github.ref == 'refs/heads/main'
         run: terraform apply -auto-approve -input=false
