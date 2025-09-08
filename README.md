@@ -6,27 +6,27 @@ This repository provisions AWS infrastructure for loading Excel files into Redsh
 
 ## Repository Structure
 
+```text
 excel-to-redshift-infra/
 ├── .github/
-│ └── workflows/ # GitHub Actions CI/CD for Terraform
-├── excel-to-redshift/ # Terraform configs
-│ ├── backend.tf
-│ ├── iam.tf
-│ ├── internet_gateway.tf
-│ ├── outputs.tf
-│ ├── provider.tf
-│ ├── providers.tf
-│ ├── redshift.tf
-│ ├── route_tables.tf
-│ ├── s3.tf
-│ ├── security_group.tf
-│ ├── terraform.tfstate
-│ ├── terraform.tfstate.backup
-│ ├── variables.tf
-│ └── vpc.tf
+│   └── workflows/         # GitHub Actions CI/CD for Terraform
+├── excel-to-redshift/     # Terraform configs
+│   ├── backend.tf
+│   ├── iam.tf
+│   ├── internet_gateway.tf
+│   ├── outputs.tf
+│   ├── provider.tf
+│   ├── providers.tf
+│   ├── redshift.tf
+│   ├── route_tables.tf
+│   ├── s3.tf
+│   ├── security_group.tf
+│   ├── terraform.tfstate
+│   ├── terraform.tfstate.backup
+│   ├── variables.tf
+│   └── vpc.tf
 ├── .gitignore
 └── README.md
-
 
 
 
