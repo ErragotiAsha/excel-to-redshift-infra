@@ -1,19 +1,13 @@
-# Excel to Redshift Infrastructure
+# Excel to Redshift Infrastructure with CI/CD
 
-This repository contains Terraform configurations to provision a complete AWS infrastructure for loading Excel files into Amazon Redshift. The setup includes:
-
-- Networking (VPC, subnets, route tables, Internet Gateway)  
-- Security (Security Groups, IAM roles/policies)  
-- S3 buckets for storing Excel/CSV files  
-- Amazon Redshift cluster for data warehousing  
-- Terraform backend configuration and outputs  
+This repository provisions AWS infrastructure for loading Excel files into Redshift, **automating deployment using GitHub Actions**.
 
 ---
 
 ## Repository Structure
 
 excel-to-redshift-infra/
-├── .github/ # GitHub workflows (optional CI/CD)
+├── .github/workflows/ # GitHub Actions CI/CD for Terraform
 ├── excel-to-redshift/ # Terraform configs
 │ ├── backend.tf
 │ ├── iam.tf
@@ -29,7 +23,7 @@ excel-to-redshift-infra/
 │ ├── terraform.tfstate.backup
 │ ├── variables.tf
 │ └── vpc.tf
-├── .gitignore # Ignore Terraform state and local files
+├── .gitignore
 └── README.md
 
 yaml
@@ -37,19 +31,58 @@ Copy code
 
 ---
 
-## Prerequisites
+## CI/CD with GitHub Actions
 
-- Terraform v1.5+ installed  
-- AWS CLI configured with valid credentials  
-- AWS account with permissions to create: VPC, subnets, security groups, Internet Gateway, S3, and Redshift  
-- Basic knowledge of Terraform and AWS services  
+This repo is configured to **automatically run Terraform** workflows:
+
+- **Terraform Plan** on every pull request  
+- **Terraform Apply** on `main` branch  
+
+### 1. GitHub Secrets
+
+Set the following **secrets** in your GitHub repository:
+
+- `AWS_ACCESS_KEY_ID` → Your AWS access key  
+- `AWS_SECRET_ACCESS_KEY` → Your AWS secret key  
+- `AWS_REGION` → The AWS region (e.g., `us-east-1`)  
 
 ---
 
-## Getting Started
+### 2. Sample Workflow: `.github/workflows/terraform.yml`
 
-### 1. Clone the Repository
+```yaml
+name: Terraform CI/CD
 
-```bash
-git clone https://github.com/ErragotiAsha/excel-to-redshift-infra.git
-cd excel-to-redshift-infra/excel-to-redshift
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  terraform:
+    name: Terraform Plan & Apply
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./excel-to-redshift
+
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
+        working-directory: ./excel-to-redshift
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve tfplan
+        working-directory: ./excel-to-redshift
