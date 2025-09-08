@@ -7,7 +7,8 @@ This repository provisions AWS infrastructure for loading Excel files into Redsh
 ## Repository Structure
 
 excel-to-redshift-infra/
-├── .github/workflows/ # GitHub Actions CI/CD for Terraform
+├── .github/
+│ └── workflows/ # GitHub Actions CI/CD for Terraform
 ├── excel-to-redshift/ # Terraform configs
 │ ├── backend.tf
 │ ├── iam.tf
@@ -26,8 +27,8 @@ excel-to-redshift-infra/
 ├── .gitignore
 └── README.md
 
-yaml
-Copy code
+
+
 
 ---
 
